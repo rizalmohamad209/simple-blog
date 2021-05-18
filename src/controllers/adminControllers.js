@@ -68,4 +68,38 @@ module.exports = {
       data: { ...findAdmin.dataValues, token },
     });
   },
+  editAdmin: async (req, res) => {
+    let { body } = req;
+    let { id } = req.params;
+    const saltRounds = 10;
+
+    body.password = bcrypt.hashSync(body.password, saltRounds);
+
+    let findAdmin = await admin.findOne({ where: { id } });
+    if (!findAdmin) {
+      res.status(404).send({
+        msg: "Edit data admin error",
+        status: 404,
+        error: "Data not found",
+      });
+    }
+
+    admin
+      .update(body, { where: { id } })
+      .then((data) => {
+        const resObject = { ...findAdmin.dataValues, ...body };
+        res.status(200).send({
+          msg: "Success edit data admin",
+          status: 200,
+          data: resObject,
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({
+          msg: "Failed While edit data",
+          status: 500,
+          err,
+        });
+      });
+  },
 };

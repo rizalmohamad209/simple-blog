@@ -2,7 +2,6 @@ const blogRoutes = require("express").Router();
 const blogControllers = require("../controllers/blogControllers");
 const authMiddleware = require("../helpers/authMiddleware");
 const uploadMiddleware = require("../helpers/uploadMiddleware");
-const cloudinary = require("../helpers/cloudinary");
 const uploadCloudinary = require("../helpers/cloudinary");
 
 blogRoutes.get("/", authMiddleware.checkLogin, blogControllers.getAllBlog);
@@ -12,6 +11,13 @@ blogRoutes.post(
   uploadCloudinary,
   blogControllers.postBlog
 );
+blogRoutes.get("/:id", blogControllers.getBlogById);
 blogRoutes.delete("/:id", blogControllers.deleteBlog);
+blogRoutes.put(
+  "/:id",
+  uploadMiddleware,
+  uploadCloudinary,
+  blogControllers.editBlog
+);
 
 module.exports = blogRoutes;
